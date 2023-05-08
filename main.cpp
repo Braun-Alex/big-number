@@ -1,6 +1,6 @@
 #include <iostream>
 
 int main() {
-    std::cout << "AAA";
+    std::cout<<std::stoi("f", nullptr, 16);
     return 0;
 }
