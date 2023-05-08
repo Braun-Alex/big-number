@@ -1,14 +1,13 @@
 #pragma once
 #include <vector>
-
-#ifndef WIN64
-using block = std::vector<int32_t>;
-#elif
-using blockNumber = std::vector<int64_t>;
-#endif
+#include <string>
+#include <bitset>
 
 class bigInt {
 public:
+    void setHex(const std::string& hexNumber);
+    std::string getHex() const;
+    inline static const std::string table = "0123456789abcdef";
 private:
-    blockNumber block = blockNumber {};
+    std::vector<std::bitset<4>> blocks;
 };
