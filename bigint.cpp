@@ -20,3 +20,34 @@ std::string bigInt::getHex() const {
     }
     return hexNumber;
 }
+
+void bigInt::INV() {
+    for (auto& bitset: this->blocks) {
+        bitset.flip();
+    }
+}
+
+void bigInt::XOR(const bigInt& otherNumber) {
+    size_t size = blocks.size(),
+           otherSize = otherNumber.blocks.size();
+    bigInt result, copy;
+    if (size < otherSize) {
+        copy.setHex(std::string(otherSize - size, '0') + getHex());
+        result.blocks.reserve(otherSize);
+        for (int i = 0; i < otherSize; i++) {
+            result.blocks.push_back(copy.blocks[i] ^ otherNumber.blocks[i]);
+        }
+    } else if (size == otherSize) {
+        result.blocks.reserve(size);
+        for (int i = 0; i < size; i++) {
+            result.blocks.push_back(blocks[i] ^ otherNumber.blocks[i]);
+        }
+    } else {
+        copy.setHex(std::string(size - otherSize, '0') + otherNumber.getHex());
+        result.blocks.reserve(size);
+        for (int i = 0; i < size; i++) {
+            result.blocks.push_back(copy.blocks[i] ^ blocks[i]);
+        }
+    }
+    *this = result;
+}

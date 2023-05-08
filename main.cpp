@@ -3,7 +3,10 @@
 
 int main() {
     bigInt value;
-    value.setHex("5072f028943e0fd5fab3273782de14b1011741bd0c5cd6ba6474330");
+    value.setHex("51bf608414ad5726a3c1bec098f77b1b54ffb2787f8d528a74c1d7fde6470ea4");
+    bigInt anotherValue;
+    anotherValue.setHex("403db8ad88a3932a0b7e8189aed9eeffb8121dfac05c3512fdb396dd73f6331c");
+    value.XOR(anotherValue);
     std::cout << value.getHex();
     return 0;
 }
