@@ -3,6 +3,7 @@
 #include <string>
 #include <bitset>
 #include <deque>
+#include <stdexcept>
 
 class bigInt {
 public:
@@ -14,7 +15,11 @@ public:
     void AND(const bigInt& otherNumber);
     void shiftL(size_t n);
     void shiftR(size_t n);
+    bool operator==(const bigInt& otherNumber) const;
+    bool operator>(const bigInt& otherNumber) const;
+    bool operator<(const bigInt& otherNumber) const;
     void ADD(const bigInt& otherNumber);
+    void SUB(const bigInt& otherNumber);
 private:
     std::vector<std::bitset<4>> blocks;
     inline static const std::string table = "0123456789abcdef";

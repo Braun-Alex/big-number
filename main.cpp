@@ -3,10 +3,10 @@
 
 int main() {
     bigInt value;
-    value.setHex("36f028580bb02cc8272a9a020f4200e346e276ae664e45ee80745574e2f5ab80");
+    value.setHex("33ced2c76b26cae94e162c4c0d2c0ff7c13094b0185a3c122e732d5ba77efebc");
     bigInt anotherValue;
-    anotherValue.setHex("70983d692f648185febe6d6fa607630ae68649f7e6fc45b94680096c06e4fadb");
-    value.ADD(anotherValue);
+    anotherValue.setHex("22e962951cb6cd2ce279ab0e2095825c141d48ef3ca9dabf253e38760b57fe03");
+    value.SUB(anotherValue);
     std::cout << value.getHex();
     return 0;
 }

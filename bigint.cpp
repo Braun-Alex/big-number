@@ -146,6 +146,108 @@ void bigInt::shiftL(size_t n) {
     }
 }
 
+bool bigInt::operator==(const bigInt& otherNumber) const {
+    size_t size = blocks.size(),
+            otherSize = otherNumber.blocks.size();
+    bigInt copy;
+    if (size < otherSize) {
+        copy.setHex(std::string(otherSize - size, '0') + getHex());
+        for (int i = 0; i < otherSize; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (copy.blocks[i][j] != otherNumber.blocks[i][j]) {
+                    return false;
+                }
+            }
+        }
+    } else if (size == otherSize) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (blocks[i][j] != otherNumber.blocks[i][j]) {
+                    return false;
+                }
+            }
+        }
+    } else {
+        copy.setHex(std::string(size - otherSize, '0') + otherNumber.getHex());
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (copy.blocks[i][j] != blocks[i][j]) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+bool bigInt::operator>(const bigInt& otherNumber) const {
+    size_t size = blocks.size(),
+            otherSize = otherNumber.blocks.size();
+    bigInt copy;
+    if (size < otherSize) {
+        copy.setHex(std::string(otherSize - size, '0') + getHex());
+        for (int i = 0; i < otherSize; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (copy.blocks[i][j] != otherNumber.blocks[i][j]) {
+                    return copy.blocks[i][j] > otherNumber.blocks[i][j];
+                }
+            }
+        }
+    } else if (size == otherSize) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (blocks[i][j] != otherNumber.blocks[i][j]) {
+                    return blocks[i][j] > otherNumber.blocks[i][j];
+                }
+            }
+        }
+    } else {
+        copy.setHex(std::string(size - otherSize, '0') + otherNumber.getHex());
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (copy.blocks[i][j] != blocks[i][j]) {
+                    return copy.blocks[i][j] > blocks[i][j];
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool bigInt::operator<(const bigInt& otherNumber) const {
+    size_t size = blocks.size(),
+            otherSize = otherNumber.blocks.size();
+    bigInt copy;
+    if (size < otherSize) {
+        copy.setHex(std::string(otherSize - size, '0') + getHex());
+        for (int i = 0; i < otherSize; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (copy.blocks[i][j] != otherNumber.blocks[i][j]) {
+                    return copy.blocks[i][j] < otherNumber.blocks[i][j];
+                }
+            }
+        }
+    } else if (size == otherSize) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (blocks[i][j] != otherNumber.blocks[i][j]) {
+                    return blocks[i][j] < otherNumber.blocks[i][j];
+                }
+            }
+        }
+    } else {
+        copy.setHex(std::string(size - otherSize, '0') + otherNumber.getHex());
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (copy.blocks[i][j] != blocks[i][j]) {
+                    return copy.blocks[i][j] < blocks[i][j];
+                }
+            }
+        }
+    }
+    return false;
+}
+
 void bigInt::ADD(const bigInt& otherNumber) {
     bool carry = false;
     size_t size = blocks.size(),
@@ -157,20 +259,20 @@ void bigInt::ADD(const bigInt& otherNumber) {
         result.resize(otherSize);
         for (int i = size - 1; i >= 0; i--) {
             for (int j = 0; j < 4; j++) {
-                result[i][j] = (copy.blocks[i][j] ^ otherNumber.blocks[i][j] ^ carry);
-                carry = (copy.blocks[i][j] & otherNumber.blocks[i][j] |
-                         copy.blocks[i][j] & carry |
-                         otherNumber.blocks[i][j] & carry);
+                result[i][j] = copy.blocks[i][j] ^ otherNumber.blocks[i][j] ^ carry;
+                carry = copy.blocks[i][j] & otherNumber.blocks[i][j] |
+                        copy.blocks[i][j] & carry |
+                        otherNumber.blocks[i][j] & carry;
             }
         }
     } else if (size == otherSize) {
         result.resize(size);
         for (int i = size - 1; i >= 0; i--) {
             for (int j = 0; j < 4; j++) {
-                result[i][j] = (blocks[i][j] ^ otherNumber.blocks[i][j] ^ carry);
-                carry = (blocks[i][j] & otherNumber.blocks[i][j] |
-                         blocks[i][j] & carry |
-                         otherNumber.blocks[i][j] & carry);
+                result[i][j] = blocks[i][j] ^ otherNumber.blocks[i][j] ^ carry;
+                carry = blocks[i][j] & otherNumber.blocks[i][j] |
+                        blocks[i][j] & carry |
+                        otherNumber.blocks[i][j] & carry;
             }
         }
     } else {
@@ -178,10 +280,10 @@ void bigInt::ADD(const bigInt& otherNumber) {
         result.resize(size);
         for (int i = size - 1; i >= 0; i--) {
             for (int j = 0; j < 4; j++) {
-                result[i][j] = (copy.blocks[i][j] ^ blocks[i][j] ^ carry);
-                carry = (copy.blocks[i][j] & blocks[i][j] |
-                         copy.blocks[i][j] & carry |
-                         blocks[i][j] & carry);
+                result[i][j] = copy.blocks[i][j] ^ blocks[i][j] ^ carry;
+                carry = copy.blocks[i][j] & blocks[i][j] |
+                        copy.blocks[i][j] & carry |
+                        blocks[i][j] & carry;
             }
         }
     }
@@ -189,4 +291,17 @@ void bigInt::ADD(const bigInt& otherNumber) {
         result.insert(result.begin(), std::bitset<4>("0001"));
     }
     blocks = std::move(result);
+}
+
+void bigInt::SUB(const bigInt& otherNumber) {
+    if (otherNumber > *this) {
+        throw std::invalid_argument("Negative result of subtracting numbers");
+    }
+    bigInt complement = otherNumber;
+    complement.INV();
+    bigInt one;
+    one.setHex("1");
+    complement.ADD(one);
+    ADD(complement);
+    blocks.erase(blocks.begin());
 }
