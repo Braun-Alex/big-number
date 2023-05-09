@@ -49,7 +49,7 @@ void bigInt::XOR(const bigInt& otherNumber) {
             result.blocks.push_back(copy.blocks[i] ^ blocks[i]);
         }
     }
-    *this = result;
+    *this = std::move(result);
 }
 
 void bigInt::OR(const bigInt& otherNumber) {
@@ -74,7 +74,7 @@ void bigInt::OR(const bigInt& otherNumber) {
             result.blocks.push_back(copy.blocks[i] | blocks[i]);
         }
     }
-    *this = result;
+    *this = std::move(result);
 }
 
 void bigInt::AND(const bigInt& otherNumber) {
@@ -99,7 +99,7 @@ void bigInt::AND(const bigInt& otherNumber) {
             result.blocks.push_back(copy.blocks[i] & blocks[i]);
         }
     }
-    *this = result;
+    *this = std::move(result);
 }
 
 void bigInt::shiftR(size_t n) {
@@ -144,4 +144,49 @@ void bigInt::shiftL(size_t n) {
             blocks[i][j] = binaryNumber[i * 4 + j];
         }
     }
+}
+
+void bigInt::ADD(const bigInt& otherNumber) {
+    bool carry = false;
+    size_t size = blocks.size(),
+           otherSize = otherNumber.blocks.size();
+    std::vector<std::bitset<4>> result;
+    bigInt copy;
+    if (size < otherSize) {
+        copy.setHex(std::string(otherSize - size, '0') + getHex());
+        result.resize(otherSize);
+        for (int i = size - 1; i >= 0; i--) {
+            for (int j = 0; j < 4; j++) {
+                result[i][j] = (copy.blocks[i][j] ^ otherNumber.blocks[i][j] ^ carry);
+                carry = (copy.blocks[i][j] & otherNumber.blocks[i][j] |
+                         copy.blocks[i][j] & carry |
+                         otherNumber.blocks[i][j] & carry);
+            }
+        }
+    } else if (size == otherSize) {
+        result.resize(size);
+        for (int i = size - 1; i >= 0; i--) {
+            for (int j = 0; j < 4; j++) {
+                result[i][j] = (blocks[i][j] ^ otherNumber.blocks[i][j] ^ carry);
+                carry = (blocks[i][j] & otherNumber.blocks[i][j] |
+                         blocks[i][j] & carry |
+                         otherNumber.blocks[i][j] & carry);
+            }
+        }
+    } else {
+        copy.setHex(std::string(size - otherSize, '0') + otherNumber.getHex());
+        result.resize(size);
+        for (int i = size - 1; i >= 0; i--) {
+            for (int j = 0; j < 4; j++) {
+                result[i][j] = (copy.blocks[i][j] ^ blocks[i][j] ^ carry);
+                carry = (copy.blocks[i][j] & blocks[i][j] |
+                         copy.blocks[i][j] & carry |
+                         blocks[i][j] & carry);
+            }
+        }
+    }
+    if (carry) {
+        result.insert(result.begin(), std::bitset<4>("0001"));
+    }
+    blocks = std::move(result);
 }

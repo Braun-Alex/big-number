@@ -14,6 +14,7 @@ public:
     void AND(const bigInt& otherNumber);
     void shiftL(size_t n);
     void shiftR(size_t n);
+    void ADD(const bigInt& otherNumber);
 private:
     std::vector<std::bitset<4>> blocks;
     inline static const std::string table = "0123456789abcdef";
