@@ -1,4 +1,11 @@
 #include "bigint.h"
+#include <iostream>
+
+bigInt::bigInt() {}
+
+bigInt::bigInt(std::bitset<4> bitset) {
+    blocks.push_back(bitset);
+}
 
 void bigInt::setHex(const std::string& bigNumber) {
     size_t size = bigNumber.size();
@@ -304,4 +311,39 @@ void bigInt::SUB(const bigInt& otherNumber) {
     complement.ADD(one);
     ADD(complement);
     blocks.erase(blocks.begin());
+}
+
+bigInt bigInt::MOD(const bigInt& number) const {
+    bigInt copy, remainder = *this, divider = number;
+    size_t size = remainder.blocks.size(),
+           otherSize = divider.blocks.size();
+    if (size < otherSize) {
+        copy.setHex(std::string(otherSize - size, '0') + remainder.getHex());
+        remainder = std::move(copy);
+    } else if (size > otherSize) {
+        copy.setHex(std::string(size - otherSize, '0') + divider.getHex());
+        divider = std::move(copy);
+    }
+    if (remainder < divider) {
+        return remainder;
+    } else if (remainder == divider) {
+        remainder.setHex("0");
+        return remainder;
+    }
+    while (remainder > divider) {
+        remainder.SUB(divider);
+    }
+    if (remainder == divider) {
+        remainder.setHex("0");
+    }
+    std::bitset<4> zeroBitset("0000");
+    decltype(remainder.blocks.begin()) iterator;
+    for (iterator = remainder.blocks.begin(); iterator != remainder.blocks.end();
+    ++iterator) {
+        if (*iterator != zeroBitset) {
+            break;
+        }
+    }
+    remainder.blocks.erase(remainder.blocks.begin(), iterator);
+    return remainder;
 }
